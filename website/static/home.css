@@ -140,6 +140,13 @@
     width: 20px;
 }
 
+.new-upload div svg {
+    margin-right: 10px;
+    height: 20px;
+    width: 20px;
+    fill: currentColor;
+}
+
 .new-upload hr {
     border: 1px solid #e0e0e0;
     margin: 5px 0px;
@@ -239,6 +246,21 @@
     margin-bottom: 20px;
 }
 
+.create-new-folder textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    outline: none;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: #444746;
+    margin-bottom: 15px;
+    resize: vertical;
+    min-height: 120px;
+    font-family: "Roboto", sans-serif;
+}
+
 .create-new-folder div {
     width: 100%;
     display: flex;
@@ -266,6 +288,33 @@
 .create-new-folder button:hover {
     background-color: #edf1fa;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Bulk Telegram Upload Styles */
+.bulk-info {
+    width: 100%;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.bulk-info p {
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.bulk-info ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.bulk-info li {
+    margin-bottom: 4px;
+    line-height: 1.4;
 }
 
 /* Move/Copy Modal Styles */
@@ -976,6 +1025,16 @@
         width: 14px;
         height: 14px;
     }
+
+    /* Bulk telegram modal adjustments */
+    .bulk-info {
+        font-size: 0.75rem;
+        padding: 10px;
+    }
+
+    .bulk-info ul {
+        padding-left: 15px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1055,6 +1114,12 @@
         font-size: 12px;
         transform: translateX(-90%);
     }
+
+    /* Bulk telegram adjustments for very small screens */
+    .bulk-info {
+        font-size: 0.7rem;
+        padding: 8px;
+    }
 }
 
 /* Landscape mobile adjustments */
@@ -1117,4 +1182,4 @@ body {
 
 .table-wrapper {
     overflow-x: hidden;
-  }
+}

@@ -345,3 +345,88 @@ async function Start_URL_Upload() {
 }
 
 // URL Uploader End
+
+// Bulk Telegram Download Start
+
+async function start_bulk_telegram_download(urls) {
+    const data = { 'urls': urls, 'path': getCurrentPath() }
+    const json = await postJson('/api/startBulkTelegramDownload', data)
+    if (json.status === 'ok') {
+        return json.id
+    } else {
+        throw new Error(`Error Starting Bulk Download : ${json.status}`)
+    }
+}
+
+async function bulk_download_progress_updater(id) {
+    uploadID = id;
+    uploadStep = 2
+    // Showing file uploader
+    document.getElementById('bg-blur').style.zIndex = '2';
+    document.getElementById('bg-blur').style.opacity = '0.1';
+    document.getElementById('file-uploader').style.zIndex = '3';
+    document.getElementById('file-uploader').style.opacity = '1';
+
+    document.getElementById('upload-filename').innerText = 'Bulk Telegram Download';
+    document.getElementById('upload-filesize').innerText = 'Processing multiple files...';
+    document.getElementById('upload-status').innerText = 'Status: Starting bulk download...';
+
+    const interval = setInterval(async () => {
+        const response = await postJson('/api/getBulkDownloadProgress', { 'id': id })
+        const data = response['data']
+
+        if (data.status === 'error') {
+            clearInterval(interval);
+            alert('Bulk download failed: ' + (data.error || 'Unknown error'))
+            window.location.reload()
+        }
+        else if (data.status === 'completed') {
+            clearInterval(interval);
+            uploadPercent.innerText = 'Progress : 100%'
+            progressBar.style.width = '100%';
+            alert(`Bulk download completed!\nSuccessful: ${data.successful}\nFailed: ${data.failed}\nTotal: ${data.total}`)
+            window.location.reload();
+        }
+        else if (data.status === 'downloading') {
+            const current = data.current;
+            const total = data.total;
+            const successful = data.successful;
+            const failed = data.failed;
+
+            const percentComplete = total > 0 ? (current / total) * 100 : 0;
+            progressBar.style.width = percentComplete + '%';
+            uploadPercent.innerText = `Progress: ${current}/${total} (${percentComplete.toFixed(1)}%)`;
+            
+            document.getElementById('upload-status').innerText = `Status: Processing message ${data.current_message || 'N/A'}`;
+            document.getElementById('upload-filesize').innerText = `Successful: ${successful}, Failed: ${failed}`;
+        }
+        else {
+            document.getElementById('upload-status').innerText = `Status: ${data.status}`;
+        }
+    }, 2000)
+}
+
+async function Start_Bulk_Telegram_Upload() {
+    try {
+        document.getElementById('bulk-telegram-upload').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('bulk-telegram-upload').style.zIndex = '-1';
+        }, 300)
+
+        const telegram_urls = document.getElementById('telegram-urls').value.trim()
+        
+        if (!telegram_urls) {
+            throw new Error('Please enter Telegram URLs')
+        }
+
+        const id = await start_bulk_telegram_download(telegram_urls)
+        await bulk_download_progress_updater(id)
+
+    }
+    catch (err) {
+        alert(err)
+        window.location.reload()
+    }
+}
+
+// Bulk Telegram Download End

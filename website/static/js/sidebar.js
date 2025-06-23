@@ -100,3 +100,33 @@ document.getElementById('remote-cancel').addEventListener('click', () => {
 document.getElementById('remote-start').addEventListener('click', Start_URL_Upload);
 
 // New Url Upload End
+
+// Bulk Telegram Upload Start
+
+document.getElementById('bulk-telegram-btn').addEventListener('click', () => {
+    document.getElementById('telegram-urls').value = '';
+    document.getElementById('bg-blur').style.zIndex = '2';
+    document.getElementById('bg-blur').style.opacity = '0.1';
+
+    document.getElementById('bulk-telegram-upload').style.zIndex = '3';
+    document.getElementById('bulk-telegram-upload').style.opacity = '1';
+    setTimeout(() => {
+        document.getElementById('telegram-urls').focus();
+    }, 300)
+})
+
+document.getElementById('bulk-telegram-cancel').addEventListener('click', () => {
+    document.getElementById('telegram-urls').value = '';
+    document.getElementById('bg-blur').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('bg-blur').style.zIndex = '-1';
+    }, 300)
+    document.getElementById('bulk-telegram-upload').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('bulk-telegram-upload').style.zIndex = '-1';
+    }, 300)
+});
+
+document.getElementById('bulk-telegram-start').addEventListener('click', Start_Bulk_Telegram_Upload);
+
+// Bulk Telegram Upload End

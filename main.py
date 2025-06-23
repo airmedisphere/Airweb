@@ -15,6 +15,7 @@ from utils.extra import auto_ping_website, convert_class_to_dict, reset_cache_di
 from utils.streamer import media_streamer
 from utils.uploader import start_file_uploader
 from utils.logger import Logger
+from utils.telegram_bulk_downloader import start_bulk_telegram_download, get_bulk_download_progress, stop_bulk_download
 import urllib.parse
 
 
@@ -243,6 +244,7 @@ async def cancel_upload(request: Request):
     logger.info(f"cancelUpload {data}")
     STOP_TRANSMISSION.append(data["id"])
     STOP_DOWNLOAD.append(data["id"])
+    stop_bulk_download(data["id"])  # Also stop bulk downloads
     return JSONResponse({"status": "ok"})
 
 
@@ -407,3 +409,39 @@ async def getFolderShareAuth(request: Request):
         return JSONResponse({"status": "ok", "auth": auth})
     except:
         return JSONResponse({"status": "not found"})
+
+
+# New Bulk Telegram Download APIs
+
+@app.post("/api/startBulkTelegramDownload")
+async def start_bulk_telegram_download_api(request: Request):
+    data = await request.json()
+
+    if data["password"] != ADMIN_PASSWORD:
+        return JSONResponse({"status": "Invalid password"})
+
+    logger.info(f"startBulkTelegramDownload {data}")
+    try:
+        id = getRandomID()
+        asyncio.create_task(
+            start_bulk_telegram_download(data["urls"], id, data["path"])
+        )
+        return JSONResponse({"status": "ok", "id": id})
+    except Exception as e:
+        return JSONResponse({"status": str(e)})
+
+
+@app.post("/api/getBulkDownloadProgress")
+async def get_bulk_download_progress_api(request: Request):
+    data = await request.json()
+
+    if data["password"] != ADMIN_PASSWORD:
+        return JSONResponse({"status": "Invalid password"})
+
+    logger.info(f"getBulkDownloadProgress {data}")
+
+    try:
+        progress = get_bulk_download_progress(data["id"])
+        return JSONResponse({"status": "ok", "data": progress})
+    except Exception as e:
+        return JSONResponse({"status": str(e)})
